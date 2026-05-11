@@ -1,3 +1,4 @@
+
 import withPWAInit from 'next-pwa';
 const withPWA = withPWAInit({
   dest: 'public',
@@ -8,8 +9,13 @@ const withPWA = withPWAInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  webpack: (config) => {
-    return config;
+  experimental:{
+    turbo:{
+      enabled:false,
+
+    },
   },
+
+
 };
 export default withPWA(nextConfig);
