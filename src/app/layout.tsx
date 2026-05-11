@@ -18,8 +18,8 @@ export const metadata: Metadata = {
   description: "Manage your expense easily",
   manifest:'/manifest.json',
   icons:{
-    icon:'/logo.png',
-    apple:'/logo.png'
+    icon:'/icon-192x192.png',
+    apple:'/icon-512x512.png'
   },
 };
 
