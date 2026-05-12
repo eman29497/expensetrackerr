@@ -9,7 +9,7 @@ export default function Balance(){
     .reduce((acc,item) => (acc += item) ,0)
     .toFixed(2);
     return(
-        <div className="mb-6 text-center">
+        <div className="mb-2 text-center">
             <h3 className=" uppercase text-gray-600 font-semibold p-6 text-sm">Your Balance</h3>
             <h1 className="text-2xl font-bold text-gray-900 ">${totalBalance}</h1>
         </div>

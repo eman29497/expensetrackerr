@@ -44,7 +44,7 @@ export default function AddTransaction(){
             onSubmit={handleSubmit}
              className="space-y-5">
                 <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">
                         Text
                     </label>
                     <input
@@ -52,7 +52,7 @@ export default function AddTransaction(){
                     onChange={(e)=>setText(e.target.value)}
                     type="text"
                     placeholder="Enter description..."
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm"
+                    className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm"
                     />
                 </div>
              <div>
@@ -67,10 +67,10 @@ export default function AddTransaction(){
                 onChange={(e)=>setAmount(e.target.value)}
                 type="number"
                 placeholder="0.00"
-                className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm"
+                className="w-full p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 bg-gray-50 text-sm"
                 />
                 </div>  
-                <button className="w-full bg-purple-600 text-white font-bold py-3 rounded-lg shadow-lg hover:bg-purple-700 transition duration-300 transform hover:scale-[1.02] active:scale-95 uppercase tracking-wide">
+                <button className="w-full bg-purple-600 text-white font-bold py-2 rounded-lg shadow-lg hover:bg-purple-700 transition duration-300 transform hover:scale-[1.02] active:scale-95 uppercase tracking-wide">
                     Add Transaction
                     </button> 
 
