@@ -11,7 +11,7 @@ export default function Balance(){
     return(
         <div className="mb-6 text-center">
             <h3 className=" uppercase text-gray-600 font-semibold p-6 text-sm">Your Balance</h3>
-            <h1 className="text-4xl font-bold text-gray-900 ">${totalBalance}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 ">${totalBalance}</h1>
         </div>
     )
 }
