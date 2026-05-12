@@ -18,14 +18,15 @@ export default function TransactionList(){
             <ul className="space-y-3">
                 {transactions.map((transaction:any)=>(
                     <li key={transaction._id}
-                    className='group relative flex justify-between items-center bg-white p-3 shadow-sm rounded-md 
+                    className='group relative flex justify-between items-center
+                     bg-white pl-0 pr-3 py-2 shadow-sm rounded-md 
                     border-r-4 border-gray-200'>
                   
                 
                     
                 <button onClick={()=> dispatch(deleteTransaction(transaction._id))}
-                className="absolute -left-10 bg-red-500 text-white px-2 py-1 rounded
-                hover:bg-red-700 transition-colors"
+                className=" bg-red-500 text-white px-2 py-1 rounded-l
+                hover:bg-red-700 transition-colors mr-3"
                             >x</button>
                     <span className="text-gray-700 font-medium">{transaction.text}</span>
                     <span className={`font-bold ${
