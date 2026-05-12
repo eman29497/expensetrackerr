@@ -28,7 +28,7 @@ export default function Home(){
   },[dispatch]);
   return(
     <div className="min-h-screen bg-gray-100">
-      <div className="max-w-md mx-auto mt-6 md:mt-10">
+      <div className="max-w-md mx-auto mt-2 md:mt-10">
         <Header/>
         <div className="bg-white shadow-xl rounded-3xl p-4 md:p-8 w-full">
         
