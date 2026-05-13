@@ -17,7 +17,7 @@ export default function AddTransaction(){
             const response = await fetch('/api/expenses',{
                 method:'POST',
                 headers:{
-                    'Content-Type': 'appliction/json',
+                    'Content-Type': 'application/json',
                 },
                 body:JSON.stringify(transactionData),
             });
@@ -28,6 +28,21 @@ export default function AddTransaction(){
    setText('');
         setAmount('');
         console.log('Data saved to MongoDB!');
+        if('Notification' in window && Notification.permission === 'granted'){
+            navigator.serviceWorker.ready.then((registration)=>{
+                const options :any ={
+                       body:`${text} add ho gya Amount:${amount}`,
+                    icon:'/icons/icon-192x192.png',
+                    vibrate:[100,50,100],
+                    badge:'/icons/badge.png',
+                };
+                registration.showNotification('Expense Added!', options);
+                  
+                });
+            
+        }else if('Notification' in window && Notification.permission !==  'denied'){
+            Notification.requestPermission();
+        }
             }else{
                 alert('Saving failed:'+result.error);
             }

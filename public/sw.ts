@@ -29,3 +29,14 @@ const serwist = new Serwist({
 });
 
 serwist.addEventListeners();
+self.addEventListener('notificationclick',(event)=>{
+  event.notification.close();
+  event.waitUntil(
+    //@ts-ignore
+    clients.matchAll({type:'window',includeUnctrolled:true}).then((clientList)=>{
+      if(clientList.length>0) return clientList[0].focus();
+      //@ts-ignore
+      return clients.openWindow('/');
+    })
+  );
+});
