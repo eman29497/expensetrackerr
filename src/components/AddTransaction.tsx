@@ -32,9 +32,9 @@ export default function AddTransaction(){
             navigator.serviceWorker.ready.then((registration)=>{
                 const options :any ={
                        body:`${text} add ho gya Amount:${amount}`,
-                    icon:'/icons/icon-192x192.png',
+                    icon:'/icon-192x192.png',
                     vibrate:[100,50,100],
-                    badge:'/icons/badge.png',
+                    badge:'/icon-192x192.png',
                 };
                 registration.showNotification('Expense Added!', options);
                   
