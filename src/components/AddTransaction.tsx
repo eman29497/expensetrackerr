@@ -3,6 +3,21 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import  {addTransaction}  from "@/app/redux/features/expenseSlice";
 
+     const showLocalNotification = (title:string,amount:number) =>{
+            if(typeof window !== 'undefined' && 'serviceWorker' in navigator){ 
+            navigator.serviceWorker.ready.then((registration)=>{
+                const options :NotificationOptions ={
+                       body:`${title} add ho gya Amount:${amount}`,
+                    icon:'/icon-192x192.png',
+                    badge:'/icon-192x192.png',
+                    tag:'expense-notification',
+                    
+                };
+                registration.showNotification('Expense Added!', options);
+                  
+                });
+            }
+        };
 export default function AddTransaction(){
     const [text,setText] = useState('');
     const [amount,setAmount] = useState('');
@@ -28,28 +43,27 @@ export default function AddTransaction(){
    setText('');
         setAmount('');
         console.log('Data saved to MongoDB!');
-        if('Notification' in window && Notification.permission === 'granted'){
-            navigator.serviceWorker.ready.then((registration)=>{
-                const options :any ={
-                       body:`${text} add ho gya Amount:${amount}`,
-                    icon:'/icon-192x192.png',
-                    vibrate:[100,50,100],
-                    badge:'/icon-192x192.png',
-                };
-                registration.showNotification('Expense Added!', options);
-                  
-                });
-            
-        }else if('Notification' in window && Notification.permission !==  'denied'){
-            Notification.requestPermission();
+        if(!('Notification' in window )){
+            console.log('This browser does not support desktop notification');
+        }else if(Notification.permission === 'granted'){
+            showLocalNotification(result.data.text, result.data.amount);
+        }else if (Notification.permission !== 'denied'){
+            Notification.requestPermission().then((permission)=>{
+                if(permission === 'granted'){
+                    showLocalNotification(result.data.text,result.data.amount);
+                }
+            });
         }
-            }else{
-                alert('Saving failed:'+result.error);
-            }
-         }catch(error){
+    }else{
+        alert('Saving failed:' + result.error);
+    
+    }
+        }catch(error){
             console.log('Error:',error);
-         }
-        };
+        }
+    };
+    
+     
     return(
         <div className="mt-10">
             <h3 className="text-lg font-bold border-b-2 border-gray-100 pb-2 mb-6 text-gray-800">
