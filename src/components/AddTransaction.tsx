@@ -1,68 +1,90 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import  {addTransaction}  from "@/app/redux/features/expenseSlice";
-
-     const showLocalNotification = (title:string,amount:number) =>{
-            if(typeof window !== 'undefined' && 'serviceWorker' in navigator){ 
-            navigator.serviceWorker.ready.then((registration)=>{
-                const options :NotificationOptions ={
-                       body:`${title} add ho gya Amount:${amount}`,
-                    icon:'/icon-192x192.png',
-                    badge:'/icon-192x192.png',
-                    tag:'expense-notification',
-                    
-                };
-                registration.showNotification('Expense Added!', options);
-                  
-                });
-            }
+import { addTransaction } from "@/app/redux/features/expenseSlice";
+export default function AddTransaction() {
+  const [text, setText] = useState('');
+  const [amount, setAmount] = useState('');
+  const dispatch = useDispatch();
+  const showLocalNotification = (title: string, amount: number, isOffline = false) => {
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then((registration) => {
+        const options = {
+          body: `${title} add ho gya Amount: ${amount}${isOffline ? ' (Saved Offline)' : ''}`,
+          icon: '/icon-192x192.png',
+          badge: '/icon-192x192.png',
+          tag: 'expense-notification',
         };
-export default function AddTransaction(){
-    const [text,setText] = useState('');
-    const [amount,setAmount] = useState('');
-    const dispatch = useDispatch();
-    const handleSubmit = async(e : React.FormEvent) =>{
-        e.preventDefault();
-        const transactionData = {
-            text:text,
-            amount:Number(amount)
-        };
-        try{
-            const response = await fetch('/api/expenses',{
-                method:'POST',
-                headers:{
-                    'Content-Type': 'application/json',
-                },
-                body:JSON.stringify(transactionData),
-            });
-            const result = await response.json();
-          
-            if(result.success){
-  dispatch(addTransaction(result.data));
-   setText('');
-        setAmount('');
-        console.log('Data saved to MongoDB!');
-        if(!('Notification' in window )){
-            console.log('This browser does not support desktop notification');
-        }else if(Notification.permission === 'granted'){
-            showLocalNotification(result.data.text, result.data.amount);
-        }else if (Notification.permission !== 'denied'){
-            Notification.requestPermission().then((permission)=>{
-                if(permission === 'granted'){
-                    showLocalNotification(result.data.text,result.data.amount);
-                }
-            });
-        }
-    }else{
-        alert('Saving failed:' + result.error);
-    
+        registration.showNotification(isOffline ? 'Offline Entry!' : 'Expense Added!', options);
+      });
     }
-        }catch(error){
-            console.log('Error:',error);
+  };
+  useEffect(() => {
+    const handleOnline = async () => {
+      console.log("Internet is back! Syncing data...");
+      const offlineEntries = JSON.parse(localStorage.getItem('offline-transactions') || '[]');
+      if (offlineEntries.length > 0) {
+        for (const entry of offlineEntries) {
+          try {
+            await fetch('/api/expenses', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: entry.text, amount: entry.amount }),
+            });
+          } catch (err) {
+            console.error("Sync failed for:", entry.text);
+          }
         }
+        localStorage.removeItem('offline-transactions');
+        alert("All offline transactions synced with MongoDB!");
+      }
     };
-    
+
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!text || !amount) return;
+    const transactionData = {
+      text: text,
+      amount: Number(amount)
+    };
+    try {
+      const response = await fetch('/api/expenses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(transactionData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        dispatch(addTransaction(result.data));
+        showLocalNotification(result.data.text, result.data.amount);
+      } else {
+        throw new Error("Server error");
+      }
+    } catch (error) {
+      console.log('Network failed, saving locally...');
+
+      const offlineEntry = { 
+        ...transactionData, 
+        id: Date.now(), 
+        status: 'pending' 
+      };
+      dispatch(addTransaction(offlineEntry));
+
+      const existing = JSON.parse(localStorage.getItem('offline-transactions') || '[]');
+      existing.push(offlineEntry);
+      localStorage.setItem('offline-transactions', JSON.stringify(existing));
+      showLocalNotification(text, Number(amount), true);
+    }
+
+    setText('');
+    setAmount('');
+  };
      
     return(
         <div className="mt-10">
